@@ -3,8 +3,8 @@
 #===============================================================================================
 # This file assumes that all data has been processed and normalized as in "Step1_Data.Rds"
 # and is available as one single file: "GENENAME_norm.Rds" 
-setwd("C:/ownCloud/Projects/MuscleModels/Data/Transcriptomics")
-source("https://bioconductor.org/biocLite.R")
+library(here)
+setwd(here("Data", "Transcriptomics"))
 library(limma)
 library(impute)
 library(ggplot2)
@@ -81,7 +81,7 @@ library(multcomp)
 library(car)
 muscle <- readRDS("GENENAME_norm.Rds")
 muscle <- muscle[!grepl('HEK', colnames(muscle))] #remove HEK cells
-muscle <- muscle[!grepl('HeLa', colnames(muscle))] #remoble HeLa cells
+muscle <- muscle[!grepl('HeLa', colnames(muscle))] #remove HeLa cells
 
 #list of sample types
 design <- c(rep(1, length(grep('HumanCell',   colnames(muscle)))), 
@@ -91,28 +91,34 @@ design <- c(rep(1, length(grep('HumanCell',   colnames(muscle)))),
             rep(5, length(grep('RatL6',       colnames(muscle)))),
             rep(6, length(grep('RatTissue',   colnames(muscle)))))
 
+
+
+
+
 #prepare data in proper table
 stats <- data.frame(Sample=numeric(), Species=numeric(), Interaction=numeric(), Residuals=numeric())
 for (i in 1:nrow(muscle)) {
   testdata <- data.frame(t(muscle[i,]))
   colnames(testdata) <- 'Gene'
-  t1 <- rownames(testdata)
-  t1<-gsub("C.*","",t1)
-  t1<-gsub("HeLa.*","",t1)
-  t1<-gsub("HEK.*","",t1)
-  t1<-gsub("Tissue.*","",t1)
-  t1<-gsub("L6.*","",t1)
-  testdata$Species <- as.factor(t1)
-  rm(t1)
-  t2 <- rownames(testdata)
-  t2<-gsub("Human","",t2)
-  t2<-gsub("Mouse","",t2)
-  t2<-gsub("Rat","",t2)
-  t2<-gsub("_.*","",t2)
-  t2<-gsub("L6","Cell",t2)
-  t2<-gsub("C2C12","Cell",t2)
-  testdata$Sample <- as.factor(t2)
-  rm(t2)
+  #Make a new column "Species" with only species
+  Species <- rownames(testdata)
+  Species<-gsub("C.*","",Species)
+  Species<-gsub("HeLa.*","",Species)
+  Species<-gsub("HEK.*","",Species)
+  Species<-gsub("Tissue.*","",Species)
+  Species<-gsub("L6.*","",Species)
+  testdata$Species <- as.factor(Species)
+  rm(Species)
+  #Make a new column "Sample" with either Cell or issue
+  Sample <- rownames(testdata)
+  Sample<-gsub("Human","",Sample)
+  Sample<-gsub("Mouse","",Sample)
+  Sample<-gsub("Rat","",Sample)
+  Sample<-gsub("_.*","",Sample)
+  Sample<-gsub("L6","Cell",Sample)
+  Sample<-gsub("C2C12","Cell",Sample)
+  testdata$Sample <- as.factor(Sample)
+  rm(Sample)
   #two-way ANOVA test in R for unbalanced designs
   my_anova <- aov(Gene ~ Sample*Species, data=testdata)
   my_anova <- Anova(my_anova, type = "II")
