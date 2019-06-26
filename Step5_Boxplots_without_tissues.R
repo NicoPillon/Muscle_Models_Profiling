@@ -8,14 +8,15 @@ library(gplots)
 library(stringr)
 library(grid)
 library(gridExtra)
+library(here)
 cbPalette <- c("#56B4E9", "#D3C839", "#CC79A7", "#0072B2", "#E69F00", "#D55E00") #color palette for colorblind people
 #             light blue    yellow     pink     dark blue    orange      red
 cbShapes  <- c(   21    ,    21    ,    24    ,    24    ,    22    ,    22    ,    23    ,     23   )
 cbLines   <- c(   'a'   ,    'b'   ,    'c'   ,    'd'   ,    'e'   ,    'f'   ,    'g'   ,     'h'  )
-setwd("C:/ownCloud/Projects/MuscleModels/Data/Transcriptomics")
+
 
 #load data and define samples
-res <- readRDS("GENENAME_norm.Rds")
+res <-  readRDS(here("Data", "Transcriptomics", "GENENAME_batch.Rds"))
 res <- cbind(res[grep('HumanCell', colnames(res))],
              res[grep('MouseC2C12', colnames(res))],
              res[grep('RatL6', colnames(res))])
@@ -51,7 +52,7 @@ PlotFunction <- function(genename) {
     scale_color_manual(values=cbPalette)
 }
 
-PlotFunction('CS')
+PlotFunction('LDHB')
 
 #======================================================================================================
 # Gene markers of glycolysis, contraction and beta-oxidation
@@ -63,7 +64,7 @@ PlotFunction('CS')
 library(grid)
 library(gridExtra)
 
-png(filename="../../Figures/Contraction.png", #print graph
+png(filename=here("Figures", "Contraction.png"), #print graph
     units="cm", width=12, height=10, 
     pointsize=12, res=300)
 matrix <- rbind(c(1,2,3,4), c(5,6,7,8))
@@ -79,7 +80,7 @@ grid.arrange(PlotFunction('MYH7') +     labs(title="Type I (oxidative)"),
 dev.off()
 
 
-png(filename="../../Figures/Glc_Uptake_basal.png", #print graph
+png(filename=here("Figures", "Glc_Uptake_basal.png"), #print graph
     units="cm", width=(3*2), height=4.3, 
     pointsize=12, res=300)
 matrix <- rbind(c(1,2))
@@ -88,7 +89,7 @@ grid.arrange(PlotFunction('SLC2A1'),
              layout_matrix=matrix)
 dev.off()
 
-png(filename="../../Figures/Glc_Uptake_insulin.png", #print graph
+png(filename=here("Figures", "Glc_Uptake_insulin.png"), #print graph
     units="cm", width=(3*2), height=4.3, 
     pointsize=12, res=300)
 matrix <- rbind(c(1,2))
@@ -97,7 +98,7 @@ grid.arrange(PlotFunction('SLC2A4'),
              layout_matrix=matrix)
 dev.off()
 
-png(filename="../../Figures/Glyg_Synthesis_basal.png", #print graph
+png(filename=here("Figures", "Glyg_Synthesis_basal.png"), #print graph
     units="cm", width=(3*2), height=4.3, 
     pointsize=12, res=300)
 matrix <- rbind(c(1,2))
@@ -106,7 +107,7 @@ grid.arrange(PlotFunction('GYS1'),
              layout_matrix=matrix)
 dev.off()
 
-png(filename="../../Figures/Glyg_Synthesis_insulin.png", #print graph
+png(filename=here("Figures", "Glyg_Synthesis_insulin.png"), #print graph
     units="cm", width=(3*2), height=4.3, 
     pointsize=12, res=300)
 matrix <- rbind(c(1,2))
@@ -115,7 +116,7 @@ grid.arrange(PlotFunction('GSK3A'),
              layout_matrix=matrix)
 dev.off()
 
-png(filename="../../Figures/FAOx.png", #print graph
+png(filename=here("Figures", "FAOx.png"), #print graph
     units="cm", width=6.5, height=4.3, 
     pointsize=12, res=300)
 matrix <- rbind(c(1,2))
@@ -124,7 +125,7 @@ grid.arrange(PlotFunction('CPT1B'),
              layout_matrix=matrix)
 dev.off()
 
-png(filename="../../Figures/GlcOx.png", #print graph
+png(filename=here("Figures", "GlcOx.png"), #print graph
     units="cm", width=6.5, height=4.3, 
     pointsize=12, res=300)
 matrix <- rbind(c(1,2))
@@ -133,7 +134,7 @@ grid.arrange(PlotFunction('PDHA1'),
              layout_matrix=matrix)
 dev.off()
 
-png(filename="../../Figures/Glycolysis.png", #print graph
+png(filename=here("Figures", "Glycolysis.png"), #print graph
     units="cm", width=(3*2), height=6, 
     pointsize=12, res=300)
 matrix <- rbind(c(1,2))
@@ -143,7 +144,7 @@ grid.arrange(PlotFunction('PFKM'),
 dev.off()
 
 
-png(filename="../../Figures/Proliferation.png", #print graph
+png(filename=here("Figures", "Proliferation.png"), #print graph
     units="cm", width=9.5, height=5, 
     pointsize=12, res=300)
 matrix <- rbind(c(1,2,3))
@@ -154,7 +155,7 @@ grid.arrange(PlotFunction('MKI67'),
 dev.off()
 
 
-png(filename="../../Figures/Lactate.png", #print graph
+png(filename=here("Figures", "Lactate.png"), #print graph
     units="cm", width=5, height=4.5, 
     pointsize=12, res=300)
 matrix <- rbind(c(1,2))
@@ -164,7 +165,7 @@ grid.arrange(PlotFunction('LDHA') + ylim(-1.5,7),
 dev.off()
 
 
-png(filename="../../Figures/CS.png", #print graph
+png(filename=here("Figures", "CS.png"), #print graph
     units="cm", width=5, height=4.5, 
     pointsize=12, res=300)
 matrix <- rbind(c(1,2))

@@ -1,61 +1,64 @@
-#=============================================================================================================================
+##############################################################################################################################
+#      Expression data in rat, mouse and human muscle, L6, C2C12 and human myotubes                                  
+##############################################################################################################################
 # Gene Ontology using ClusterProfiler https://github.com/GuangchuangYu/clusterProfiler/issues/32
-#=============================================================================================================================
-setwd("C:/ownCloud/Projects/MuscleModels/Data/Transcriptomics")
+# using the genes enriches in each model, we run gene enrichment to look at pathways specific to each cell model
+library(here)
 library(clusterProfiler)
 library(org.Hs.eg.db)
 library(pathview)
 keytypes(org.Hs.eg.db) # use keytypes to list all supporting types
+MouseC2C12 <- read.table(here("Stats", "MouseC2C12_Specific.txt"))
+RatL6 <- read.table(here("Stats", "RatL6_Specific.txt"))
+HumanCell <- read.table(here("Stats", "HumanCell_Specific.txt"))
 
 #genes have to be ENTREZID!
-Annotation <- read.delim("C:/ownCloud/R/Annotation_All.txt", sep="") # This is my homemade annotation file
-MouseC2C12 <- read.table("../../Stats/MouseC2C12_Specific.txt")
-MouseC2C12 <- merge(Annotation, MouseC2C12, by.x=3, by.y=0, all=F)
-MouseC2C12 <- data.frame(aggregate(MouseC2C12[,6:ncol(MouseC2C12)],by = list(MouseC2C12$ENTREZID), FUN=mean, na.rm=TRUE), row.names = 1)
-RatL6 <- read.table("../../Stats/RatL6_Specific.txt")
-RatL6 <- merge(Annotation, RatL6, by.x=3, by.y=0, all=F)
-RatL6 <- data.frame(aggregate(RatL6[,6:ncol(RatL6)],by = list(RatL6$ENTREZID), FUN=mean, na.rm=TRUE), row.names = 1)
-HumanCell <- read.table("../../Stats/HumanCell_Specific.txt")
-HumanCell <- merge(Annotation, HumanCell, by.x=3, by.y=0, all=F)
-HumanCell <- data.frame(aggregate(HumanCell[,6:ncol(HumanCell)],by = list(HumanCell$ENTREZID), FUN=mean, na.rm=TRUE), row.names = 1)
+Annotation <- bitr(c(rownames(MouseC2C12), rownames(RatL6), rownames(HumanCell)),
+                   fromType = "SYMBOL",
+                   toType = "ENTREZID",
+                   OrgDb = org.Hs.eg.db)
+
+MouseC2C12 <- merge(Annotation, MouseC2C12, by.x=1, by.y=0, all=F)
+RatL6 <- merge(Annotation, RatL6, by.x=1, by.y=0, all=F)
+HumanCell <- merge(Annotation, HumanCell, by.x=1, by.y=0, all=F)
 
 #Make matrix
-HumanCell$entrez <- rownames(HumanCell)
+HumanCell$entrez <- HumanCell$ENTREZID
 HumanCell$group <- "Human Primary"
 HumanCell$direction <- "up"
 HumanCell$direction[HumanCell$LogFC_mean <0] <- "down"
-MouseC2C12$entrez <- rownames(MouseC2C12)
+MouseC2C12$entrez <- MouseC2C12$ENTREZID
 MouseC2C12$group <- "Mouse C2C12"
 MouseC2C12$direction <- "up"
 MouseC2C12$direction[MouseC2C12$LogFC_mean <0] <- "down"
-RatL6$entrez <- rownames(RatL6)
+RatL6$entrez <- RatL6$ENTREZID
 RatL6$group <- "Rat L6"
 RatL6$direction <- "up"
 RatL6$direction[RatL6$LogFC_mean <0] <- "down"
-mydf <- rbind(HumanCell[,6:9], MouseC2C12[,6:9], RatL6[,6:9])
+mydf <- rbind(HumanCell[,9:11], MouseC2C12[,9:11], RatL6[,9:11])
 rm(Annotation, HumanCell, MouseC2C12, RatL6)
 
 #Gene Ontology
 bp <- compareCluster(entrez~group+direction, data=mydf,
                               fun="enrichGO", ont = "BP",
                               OrgDb = org.Hs.eg.db, pvalueCutoff=0.05)
-saveRDS(bp, "../Stats/enrichGO.Rds")
+saveRDS(bp, here("Stats", "enrichGO.Rds"))
 
 
 #=============================================================================================================================
 #Gene Ontology plot and simplify
 #=============================================================================================================================
-setwd("C:/ownCloud/Projects/MuscleModels/Data/Transcriptomics")
+
 library(clusterProfiler)
 library(org.Hs.eg.db)
 library(pathview)
 keytypes(org.Hs.eg.db) # use keytypes to list all supporting types
-bp <- readRDS("../../Stats/enrichGO.Rds")
+bp <- readRDS(here("Stats", "enrichGO.Rds"))
 bp.result <- bp@compareClusterResult
 dotplot(bp, x=~direction) + ggplot2::facet_grid(~group)
 
 #save original GO
-png(filename="../../Figures/enrichGO.png", #print graph
+png(filename=here("Figures", "enrichGO.png"), #print graph
     units="cm", width=24, height=18, 
     pointsize=12, res=600)
 dotplot(bp, x=~direction, showCategory = 5, font.size=9) + ggplot2::facet_grid(~group)
@@ -72,7 +75,7 @@ bp2 <- dropGO(bp, level=NULL, term=c('GO:0009167', 'GO:0009126', 'GO:0009205', '
 dotplot(bp2, x=~direction, show=3) + ggplot2::facet_grid(~group)
 
 #save cleaned GO
-png(filename="../../Figures/enrichGO_simplified.png", #print graph
+png(filename=here("Figures", "enrichGO_simplified.png"), #print graph
     units="cm", width=24, height=12, 
     pointsize=12, res=600)
 dotplot(bp2, x=~direction, showCategory = 3, font.size=9) + ggplot2::facet_grid(~group)

@@ -8,12 +8,13 @@ library(gplots)
 library(stringr)
 library(grid)
 library(gridExtra)
+library(here)
 cbPalette <- c("#E69F00", "#0072B2", "#CC79A7", "#009E73", "#D3C839", "#BC5300", "#84C4E8", "#000000") #color palette for colorblind people
 cbShapes  <- c(   21    ,    21    ,    24    ,    24    ,    22    ,    22    ,    23    )
 cbLines   <- c(   'a'   ,    'b'   ,    'c'   ,    'd'   ,    'e'   ,    'f'   ,    'g'   )
-setwd("C:/ownCloud/Projects/MuscleModels/Data/Transcriptomics")
 
-rawdata <- readRDS("GENENAME_norm.Rds")
+
+rawdata <- readRDS(here("Data", "Transcriptomics", "GENENAME_batch.Rds"))
 rawdata <- rawdata[!grepl('HEK', colnames(rawdata))] #remove HEK cells
 rawdata <- rawdata[!grepl('HeLa', colnames(rawdata))] #remove HeLa cells
 

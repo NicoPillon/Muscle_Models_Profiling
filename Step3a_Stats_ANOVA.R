@@ -4,7 +4,6 @@
 # This file assumes that all data has been processed and normalized as in "Step1_Data.Rds"
 # and is available as one single file: "GENENAME_norm.Rds" 
 library(here)
-setwd(here("Data", "Transcriptomics"))
 library(limma)
 library(impute)
 library(ggplot2)
@@ -22,7 +21,7 @@ library(car)
 # to muscle tissue. So we perform intra-species comparisons: L6 vs Rat tissue, C2C12
 # vs mouse tissue and human primary vs human tissue. Simple t-test is used here with limma.
 library(limma)
-muscle <- readRDS("GENENAME_norm.Rds")
+muscle <- readRDS(here("Data_processed", "GENENAME_norm.Rds"))
 muscle <- muscle[!grepl('HEK', colnames(muscle))] #remove HEK cells
 muscle <- muscle[!grepl('HeLa', colnames(muscle))] #remove HeLa cells
 
@@ -59,7 +58,7 @@ nrow(Rat)*100/nrow(muscle)   # percentage for rat
 
 #Venn Diagram
 require(VennDiagram)
-venn.diagram(x=list(A=rownames(Human), B=rownames(Mouse), C=rownames(Rat)), filename="../../Figures/VennDiagram.png",
+venn.diagram(x=list(A=rownames(Human), B=rownames(Mouse), C=rownames(Rat)), filename=here("Figures", "VennDiagram.png"),
              units="cm", width=9, height=5, res=300, margin=0.05,
              col = "black", lwd=0.5,
              fill = c("#0072B2", "#009E73", "#D55E00"), 
@@ -79,7 +78,7 @@ venn.diagram(x=list(A=rownames(Human), B=rownames(Mouse), C=rownames(Rat)), file
 # the genes with non-uniform variance and can only be used as an approximate tool to find profiles.
 library(multcomp)
 library(car)
-muscle <- readRDS("GENENAME_norm.Rds")
+muscle <- readRDS(here("Data_Processed", "GENENAME_batch.Rds"))
 muscle <- muscle[!grepl('HEK', colnames(muscle))] #remove HEK cells
 muscle <- muscle[!grepl('HeLa', colnames(muscle))] #remove HeLa cells
 
@@ -90,10 +89,6 @@ design <- c(rep(1, length(grep('HumanCell',   colnames(muscle)))),
             rep(4, length(grep('MouseTissue', colnames(muscle)))),
             rep(5, length(grep('RatL6',       colnames(muscle)))),
             rep(6, length(grep('RatTissue',   colnames(muscle)))))
-
-
-
-
 
 #prepare data in proper table
 stats <- data.frame(Sample=numeric(), Species=numeric(), Interaction=numeric(), Residuals=numeric())
@@ -155,10 +150,8 @@ stats_all <- cbind(coeff,
                    Species.FDR=p.adjust(stats$Species, method="fdr"),
                    Interaction.FDR=p.adjust(stats$Interaction, method="fdr"))
   
-write.table(stats_all, file="Stats/2-way_ANOVA.txt", sep='\t')
+write.table(stats_all, file=here("Stats", "2-way_ANOVA.txt"))
 
-library(xlsx)
-write.xlsx(stats_all, file="Stats/2-way_ANOVA.xlsx")
 
 
 #------------------------------------------------------------------------------------------------------------------

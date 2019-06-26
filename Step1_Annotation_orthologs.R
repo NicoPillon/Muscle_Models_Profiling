@@ -71,7 +71,7 @@ annot <- rbind(annot1, annot2, annot4, annot5, annot6,
 annot[annot == "" ] = NA
 annot <- annot[!is.na(annot$affy),]
 annot$GENENAME <- NULL
-saveRDS(annot, file=here("Data", "Transcriptomics", "Annotation_Species.Rds"))
+saveRDS(annot, file=here("Data", "Transcriptomics", "Annotation_ENSEMBL.Rds"))
 
 
 #=============================================================================================================================
@@ -79,7 +79,7 @@ saveRDS(annot, file=here("Data", "Transcriptomics", "Annotation_Species.Rds"))
 #=============================================================================================================================
 # This section will look for CEL files, apply RMA normalization and annotate with ENSEMBL.
 # The final file for each platform is in each folder in the format "GPLxxx_ENSEMBL.Rds".
-annot <- readRDS(here("Data", "Transcriptomics", "Annotation_Species.Rds"))
+annot <- readRDS(here("Data_Processed", "Annotation_ENSEMBL.Rds"))
 GEOs <- c('GPL81',   #Affymetrix Murine Genome U74A Version 2 Array
           'GPL570',  #Affymetrix Human Genome U133 Plus 2.0 Array
           'GPL1261', #Affymetrix Mouse Genome 430 2.0 Array
@@ -89,18 +89,16 @@ GEOs <- c('GPL81',   #Affymetrix Murine Genome U74A Version 2 Array
           'GPL17586' #Affymetrix Human Transcriptome Array 2.0
 ) 
 
-i <- 1
-
-
 for (i in 1:length(GEOs)) {
   library(oligo)
-  celFiles <- list.celfiles(here("Data", "Transcriptomics", GEOs[i]), full=T, listGzipped=T)
+  celFiles <- list.celfiles(here("Data_Raw", "Transcriptomics", GEOs[i]), full=T, listGzipped=T)
   data <- read.celfiles(celFiles, checkType=F)
   eset <- rma(data)
   eset  <- data.frame(exprs(eset))
   annotdata <- merge(annot, eset, by.x=1, by.y=0, all=F)
   annotdata <- data.frame(aggregate(annotdata[,3:ncol(annotdata)],by = list(annotdata$ENSEMBL),FUN = mean), row.names = 1)
-  saveRDS(annotdata, file=here("Data", "Transcriptomics", GEOs[i], paste(GEOs[i], "_ENSEMBL.Rds", sep=""))) # export file
+  colnames(annotdata) <- paste(GEOs[i], "_", colnames(annotdata), sep="")
+  saveRDS(annotdata, file=here("Data_Processed", paste(GEOs[i], "_ENSEMBL.Rds", sep=""))) # export file
 }
 
 
@@ -183,7 +181,7 @@ All <- All[!grepl("SNOR", All$genename),] # snoRNA
 All <- All[!grepl("RF0", All$genename),] # undefined RNA
 All <- All[!grepl("RIK", All$genename),] # Riken annotation
 
-saveRDS(All, file=here("Data", "Transcriptomics", "Orthologs.Rds"))
+saveRDS(All, file=here("Data_Processed", "Annotation_Orthologs.Rds"))
 
 
 #=============================================================================================================================
@@ -191,10 +189,10 @@ saveRDS(All, file=here("Data", "Transcriptomics", "Orthologs.Rds"))
 # This section will merge the data from all plateforms, annotate with orthologs and normalize. 
 #=============================================================================================================================
 # create a list of all ENSEMBL files
-list.filenames <- list.files(here("Data", "Transcriptomics"), pattern="ENSEMBL.Rds", recursive=T)
+list.filenames <- list.files(here("Data_Processed"), pattern="ENSEMBL.Rds", recursive=T)
 list.data <- list()
 for (i in 1:length(list.filenames)) {
-  list.data[[i]]<-readRDS(list.filenames[i])
+  list.data[[i]]<-readRDS(here("Data_Processed", list.filenames[i]))
 }
 names(list.data) <- list.filenames
 
@@ -211,7 +209,7 @@ All <- data.frame(All, row.names = 1)
 rm(list.data, asd, df, i, list.filenames)
 
 # merge by orthologs human using custom made file (see Across_Species_Orthologs.R)
-orthologs <- readRDS("orthologs.Rds")
+orthologs <- readRDS(here("Data_Processed", "Annotation_Orthologs.Rds"))
 human <- merge(orthologs, All[,grep('Human', colnames(All))], by.x=1, by.y=0, all=T)
 rm(orthologs) #needed to free some memory on slow machines
 rat   <- merge(human,     All[,grep('Rat', colnames(All))], by.x=2, by.y=0, all=T)
@@ -235,4 +233,26 @@ Norm <- data.frame(Norm - median(Norm, na.rm = T))
 boxplot(Norm)
 Norm <- Norm[order(colnames(Norm))]
 
-saveRDS(Norm, here("Data", "Transcriptomics", "GENENAME_norm.Rds"))
+saveRDS(Norm, here("Data_Processed", "GENENAME_norm.Rds"))
+
+
+#=============================================================================================================================
+# Batch correction (Not used in manuscript)
+# I tried to to a batch correction using the different plateforms as batches. However, this erases differences
+# between species because the gene arrays are different in human/rat/mouse. In the end, I decided to not use
+# any batch correction. The downside of this choice is that I am unable to seprate differences dues to species 
+# from differences due to the different arrays used.
+#=============================================================================================================================
+res <- readRDS(here("Data_Processed", "GENENAME_batch.Rds"))
+
+library(stringr)
+batch <- gsub("_.*","",colnames(res) ) # Extract the name of the array used from the column names
+unique(batch) # there are 8 different types of arrays used in the analysis
+
+library(limma)
+res <- removeBatchEffect(res, batch)
+res <- normalizeBetweenArrays(res, method="quantile")
+res <- data.frame(res)
+boxplot(res)
+
+saveRDS(res, here("Data_Processed", "GENENAME_batch.Rds"))

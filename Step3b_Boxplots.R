@@ -1,6 +1,7 @@
 ##############################################################################################################################
 #      Expression data in rat, mouse and human muscle, L6, C2C12 and human myotubes                                   ========
 ##############################################################################################################################
+library(here)
 library(ggplot2)
 library(ggrepel)
 library(ggfortify)
@@ -13,10 +14,10 @@ cbPalette <- c("#56B4E9", "#D3C839", "#CC79A7", "#0072B2", "#E69F00", "#D55E00")
 #             light blue    yellow     pink     dark blue    orange      red
 cbShapes  <- c(   21    ,    21    ,    24    ,    24    ,    22    ,    22    ,    23    ,     23   )
 cbLines   <- c(   'a'   ,    'b'   ,    'c'   ,    'd'   ,    'e'   ,    'f'   ,    'g'   ,     'h'  )
-setwd("C:/ownCloud/Projects/MuscleModels/Data/Transcriptomics")
+
 
 #load data and define samples
-res <- readRDS("GENENAME_norm.Rds")
+res <- readRDS(here("Data_Processed", "GENENAME_norm.Rds"))
 res <- cbind(res[grep('HumanCell', colnames(res))],
              res[grep('MouseC2C12', colnames(res))],
              res[grep('RatL6', colnames(res))],
@@ -64,31 +65,32 @@ PlotFunction <- function(genename) {
 # Boxplots of typical gene profiles (based on the file "Stats_ANOVA")
 #======================================================================================================
 # Representative genes selected in Stats for the effect of species, model or interation.
-stats <- read.delim("Stats/2-way_ANOVA.txt")[,22:24]
+stats <- read.delim(here("Stats", "2-way_ANOVA.txt"))[,22:24]
 
 
 #typical species effect
 species <- stats[stats$Species.FDR<0.01 & stats$Sample.FDR>0.5 & stats$Interaction.FDR>0.5,]
 species <- species[order(species$Species.FDR),]
-t1 <- PlotFunction("GRIN2B")
-t2 <- PlotFunction("IFNA14")
+t1 <- PlotFunction(rownames(species[1,]))
+t2 <- PlotFunction(rownames(species[2,]))
 t1
 
 #typical cell vs tissue effect
 sample <- stats[stats$Species.FDR>0.5 & stats$Sample.FDR<0.01 & stats$Interaction.FDR>0.5,]
 sample <- sample[order(sample$Sample.FDR),]
-t3 <- PlotFunction("LDHD")
-t4 <- PlotFunction("SLC38A3")
+t3 <- PlotFunction(rownames(sample[1,]))
+t4 <- PlotFunction(rownames(sample[1,]))
+t3
 
 #typical interaction
 interaction <- stats[stats$Species.FDR<.001 & stats$Sample.FDR<0.001 & stats$Interaction.FDR<0.001,]
 interaction <- interaction[order(interaction$Interaction.FDR),]
-t5 <- PlotFunction("PLN")
-t6 <- PlotFunction("CADM1")
-
+t5 <- PlotFunction(rownames(interaction[1,]))
+t6 <- PlotFunction(rownames(interaction[1,]))
+t5
 
 # Print figure
-png(filename="../../Figures/Profiles.png", #print graph
+png(filename=here("Figures", "Profiles.png"), #print graph
     units="cm", width=17.2, height=12, 
     pointsize=12, res=300)
 matrix <- rbind(c(1,2,3), c(4,5,6))
@@ -107,7 +109,7 @@ dev.off()
 # Insulin response: glucose transporter system (GLUT4) is rate limiting
 library(grid)
 library(gridExtra)
-png(filename="../../Figures/Markers.png", #print graph
+png(filename=here("Figures", "Markers.png"), #print graph
     units="cm", width=18, height=12, 
     pointsize=12, res=300)
 matrix <- rbind(c(1,2,3,4), c(5,6,7,8))
