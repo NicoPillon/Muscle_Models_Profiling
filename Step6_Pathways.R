@@ -14,7 +14,7 @@ cbShapes  <- c(   21    ,    21    ,    24    ,    24    ,    22    ,    22    ,
 cbLines   <- c(   'a'   ,    'b'   ,    'c'   ,    'd'   ,    'e'   ,    'f'   ,    'g'   )
 
 
-rawdata <- readRDS(here("Data", "Transcriptomics", "GENENAME_batch.Rds"))
+rawdata <- readRDS(here("Data_Processed", "GENENAME_batch.Rds"))
 rawdata <- rawdata[!grepl('HEK', colnames(rawdata))] #remove HEK cells
 rawdata <- rawdata[!grepl('HeLa', colnames(rawdata))] #remove HeLa cells
 
@@ -33,41 +33,36 @@ theme <- theme(plot.title  = element_text(face="bold", color="black", size=7, an
                legend.key.size = unit(0.3, "cm"))
 
 
-
+#=====================================================================================================================
 # Glycolysis
-HK    <- paste(All['HK2',  ])                           #Hexokinase
-GPI   <- paste(All['GPI',  ])                                                     #Phosphoglucose isomerase
-PFKL  <- paste(All['PFKL', ])                                                     #Phosphofructokinase
-ALDO  <- paste((All['ALDOA',]+All['ALDOB',]+All['ALDOC',])/3) #Aldolase
-TPI   <- paste(All['TPI1', ])                                                     #triosephosphate isomerase
-GAPDH <- paste(All['GAPDH',])                                                     #Glyceraldehyde-3-phosphate dehydrogenase
-PGK   <- paste(All['PGK1', ])                           #Phosphoglycerate kinase
+HK    <- paste(All['HK2',  ])                                   #Hexokinase
+GPI   <- paste(All['GPI',  ])                                   #Phosphoglucose isomerase
+PFKL  <- paste(All['PFKL', ])                                   #Phosphofructokinase
+ALDO  <- paste((All['ALDOA',]+All['ALDOB',]+All['ALDOC',])/3)   #Aldolase
+TPI   <- paste(All['TPI1', ])                                   #triosephosphate isomerase
+GAPDH <- paste(All['GAPDH',])                                   #Glyceraldehyde-3-phosphate dehydrogenase
+PGK   <- paste(All['PGK1', ])                                   #Phosphoglycerate kinase
 PGAM  <- paste((All['PGM1', ]+All['PGM2', ]+All['PGM3', ]
-                +All['PGAM1',]+All['PGAM2', ])/5)                          #Phosphoglycerate mutase
-ENO   <- paste((All['ENO1', ]+All['ENO2', ]+All['ENO3', ])/3) #Phosphopyruvate hydratase (Enolase)
-PKM   <- paste(All['PKM',  ])                                                     #Pyruvate kinase muscle
-LDH   <- paste((All['LDHA',  ]+All['LDHB',  ])/2)                         #lactate dehydrogenase
+                +All['PGAM1',]+All['PGAM2', ])/5)               #Phosphoglycerate mutase
+ENO   <- paste((All['ENO1', ]+All['ENO2', ]+All['ENO3', ])/3)   #Phosphopyruvate hydratase (Enolase)
+PKM   <- paste(All['PKM',  ])                                   #Pyruvate kinase muscle
+LDH   <- paste((All['LDHA',  ]+All['LDHB',  ])/2)               #lactate dehydrogenase
 values <- as.numeric(c(HK, GPI, PFKL, ALDO, TPI, GAPDH, PGK, PGAM, ENO, PKM, LDH))
 Gene <-c(rep("HK", 3), rep("GPI", 3), rep("PFKL", 3), rep("ALDO", 3),
          rep("TPI", 3), rep("GAPDH", 3), rep("PGK", 3), rep("PGAM", 3),
          rep("ENO", 3), rep("PKM", 3), rep("LDH", 3))
-Exercise <-factor(rep(c("HSMC",
-                        "C2C12",
-                        "L6"), 11), levels=c('HSMC', 'C2C12', 'L6'))
+Exercise <-factor(rep(c("HSMC", "C2C12", "L6"), length(unique(Gene))), levels=c('HSMC', 'C2C12', 'L6'))
 mydata <-data.frame(Exercise, values, Gene)
+
 Glycolysis <- ggplot(mydata, aes(Exercise, values, fill=Gene)) +
   geom_bar(stat="identity", colour="black", size=0.2) +
   labs(x= "", y= "Relative abundance",
        fill="") + theme_bw() + theme +
   scale_fill_brewer(palette="Set3")
-
-png(filename="../../Figures/Glycolysis.png", #print graph
-    units="cm", width=5, height=5, 
-    pointsize=12, res=600)
 Glycolysis
-dev.off()
 
 
+#=====================================================================================================================
 # Oxidative metabolism
 Complex1 <- c('ND1',     'ND2',     'ND3',     'ND4',    'ND4L',   'ND5',     'ND6',    'NDUFS1', 'NDUFS2',
               'NDUFS3',  'NDUFS4',  'NDUFS5',  'NDUFS6', 'NDUFS7', 'NDUFS8',  'NDUFV1', 'NDUFV2', 'NDUFV3',
@@ -83,7 +78,6 @@ Complex4 <- c('COX1',    'COX2',    'COX3',    'COX4I1', 'COX4I2', 'COX5A',   'C
 Complex5 <- c('ATP5A1',  'ATP5B',   'ATP5C1',  'ATP5D',  'ATP5E',  'ATP5G1',  'ATP5G2', 'ATP5G3',
               'USMG5',   'ATP5I',   'ATP5J2',  'ATP5L',  'C14orf2','ATP6',    'ATP8',   'ATP5F1',
               'ATP5H',   'ATP5J',   'ATP5O',   'ATPIF1', 'OXA1L')
-
 Complex1.mean <- colMeans(All[Complex1, ], na.rm=T)
 Complex2.mean <- colMeans(All[Complex2, ], na.rm=T)
 Complex3.mean <- colMeans(All[Complex3, ], na.rm=T)
@@ -98,10 +92,9 @@ values <- as.numeric(c(Complex1.mean, Complex2.mean, Complex3.mean, Complex4.mea
 sd <- as.numeric(c(Complex1.sd, Complex2.sd, Complex3.sd, Complex4.sd, Complex5.sd))
 Gene <-c(rep("Complex I", 3), rep("Complex II", 3), rep("Complex III", 3),
          rep("Complex IV", 3), rep("Complex V", 3))
-Exercise <-factor(rep(c("HSMC",
-                 "C2C12",
-                 "L6"), 5), levels=c('HSMC', 'C2C12', 'L6'))
+Exercise <-factor(rep(c("HSMC", "C2C12", "L6"), length(unique(Gene))), levels=c('HSMC', 'C2C12', 'L6'))
 mydata <-data.frame(Exercise, values, sd, Gene)
+
 Respiration <- ggplot(mydata, aes(Exercise, values, fill=Gene)) +
   geom_bar(stat="identity", colour="black", size=0.2) +
   labs(x= "",
@@ -110,7 +103,7 @@ Respiration <- ggplot(mydata, aes(Exercise, values, fill=Gene)) +
        label="")  + theme_bw() + theme +
   scale_fill_brewer(palette="Set3")
 
-png(filename="../../Figures/Mitochondria.png", #print graph
+png(filename=here("Figures", "Mitochondria.png"), #print graph
     units="cm", width=5, height=5, 
     pointsize=12, res=600)
 Respiration
@@ -118,6 +111,33 @@ dev.off()
 Respiration
 
 
+#=====================================================================================================================
+# AMPK
+PRKAA1 <- paste(All['PRKAA1',])
+PRKAA2 <- paste(All['PRKAA2',])
+PRKAB1 <- paste(All['PRKAB1',])
+PRKAB2 <- paste(All['PRKAB2',])
+PRKAG1 <- paste(All['PRKAG1',]) #not expressed
+PRKAG2 <- paste(All['PRKAG2',])
+PRKAG3 <- paste(All['PRKAG3',])
+values <- as.numeric(c(PRKAA1, PRKAA2, PRKAB1, PRKAB2, PRKAG1, PRKAG2, PRKAG3))
+Gene <-c(rep("PRKAA1", 3), rep("PRKAA2", 3),
+         rep("PRKAB1", 3),  rep("PRKAB2", 3),
+         rep("PRKAG1", 3),  rep("PRKAG2", 3),  rep("PRKAG3", 3))
+Exercise <-factor(rep(c("HSMC", "C2C12", "L6"), length(unique(Gene))), levels=c('HSMC', 'C2C12', 'L6'))
+mydata <-data.frame(Exercise, values, Gene)
+
+AMPKisoforms <- ggplot(mydata, aes(Exercise, values, fill=Gene)) +
+  geom_bar(stat="identity", colour="black", size=0.2) +
+  
+  labs(title="Lipid Metabolism",
+       x= "",  y= "Relative abundance",
+       fill="") + theme +
+  scale_fill_brewer(palette="Set3")
+AMPKisoforms
+
+
+#=====================================================================================================================
 # Figure for fiber type
 MYH1 <- paste(All['MYH1',]) #Type2X
 MYH2 <- paste(All['MYH2',]) #Type2A
@@ -159,6 +179,7 @@ values <-as.numeric(c(MYH1, MYH2, MYH4, MYH7, MYL1, MYL2, MYL3,
                       TNNT1, TNNT2, TNNT3, TNNC1, TNNC2, TNNI1, TNNI2, TNNI3))
 Exercise <-rep(c("HSMC", "C2C12", "L6"), length(values))
 mydata <-data.frame(Exercise, values, Gene)
+
 FiberType <- ggplot(mydata, aes(Exercise, values, fill=Gene, cutoff = factor(0) )) +
   geom_bar(stat="identity", colour="black", size=0.2) +
 
@@ -169,6 +190,7 @@ FiberType <- ggplot(mydata, aes(Exercise, values, fill=Gene, cutoff = factor(0) 
 FiberType
 
 
+#=====================================================================================================================
 # Figure for Insulin signalling
 INSR <- paste(All['INSR',])
 IRS1 <- paste(All['IRS1',])
@@ -187,6 +209,7 @@ Exercise <-rep(c("Human Myotube",
                  "Rat L6"), 9)
 mydata <-data.frame(Exercise, values, Gene)
 mydata$Gene <- factor(mydata$Gene, levels=c('INSR','IRS1','IRS2','PI3K','PDK1','AKT1','AKT2','TBC1D4','GLUT4')) #for a box plot, x should be a factor
+
 InsulinSignalling <- ggplot(mydata, aes(Exercise, values, fill=Gene)) +
   geom_bar(stat="identity", colour="black", size=0.2) +
 
@@ -197,9 +220,8 @@ InsulinSignalling <- ggplot(mydata, aes(Exercise, values, fill=Gene)) +
 InsulinSignalling
 
 
-
-
-#Fatty Acid Metabolism
+#=====================================================================================================================
+# Fatty Acid Metabolism
 ACAT <- paste((All['ACAA1', ]+All['ACAA2', ]+All['ACAT1', ])/3)        #Acetyl-CoA Transferases
 ACAD <- paste((All['ACAD9', ]+All['ACAD10',]                           #Acyl-CoA Dehydrogenases
              +All['ACAD11',]+All['ACADL', ]
@@ -246,36 +268,4 @@ LipidMetab <- ggplot(mydata, aes(Exercise, values, fill=Gene)) +
        fill="") + theme +
   scale_fill_brewer(palette="Set3")
 LipidMetab
-
-
-
-
-
-
-
-#AMPK
-PRKAA1 <- paste(All['PRKAA1',])
-PRKAA2 <- paste(All['PRKAA2',])
-PRKAB1 <- paste(All['PRKAB1',])
-PRKAB2 <- paste(All['PRKAB2',])
-PRKAG1 <- paste(All['PRKAG1',]) #not expressed
-PRKAG2 <- paste(All['PRKAG2',])
-PRKAG3 <- paste(All['PRKAG3',])
-
-values <- as.numeric(c(PRKAA1, PRKAA2, PRKAB1, PRKAB2, PRKAG1, PRKAG2, PRKAG3))
-Gene <-c(rep("PRKAA1", 3), rep("PRKAA2", 3),
-         rep("PRKAB1", 3),  rep("PRKAB2", 3),
-         rep("PRKAG1", 3),  rep("PRKAG2", 3),  rep("PRKAG3", 3))
-Exercise <-rep(c("Human Myotube",
-                 "Mouse C2C12",
-                 "Rat L6"), 7)
-mydata <-data.frame(Exercise, values, Gene)
-AMPKisoforms <- ggplot(mydata, aes(Exercise, values, fill=Gene)) +
-  geom_bar(stat="identity", colour="black", size=0.2) +
-  
-  labs(title="Lipid Metabolism",
-       x= "",  y= "Relative abundance",
-       fill="") + theme +
-  scale_fill_brewer(palette="Set3")
-AMPKisoforms
 
