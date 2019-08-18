@@ -1,5 +1,5 @@
-setwd("C:/ownCloud/Projects/MuscleModels/Data/Transcriptomics")
-muscle  <- readRDS("C:/Dropbox/NICO/R/Across_Species/Data/Transcriptomics/GENENAME_norm.Rds")
+library(here)
+muscle  <- readRDS(here("Data_Processed", "GENENAME_norm.Rds"))
 muscle <- cbind(muscle[grepl('HumanCell', colnames(muscle))],
                 muscle[grepl('MouseC2C12', colnames(muscle))],
                 muscle[grepl('RatL6', colnames(muscle))],
@@ -13,7 +13,7 @@ max(muscle, na.rm=T)
 
 #list of gene names as RDS
 list_genes <- rownames(muscle)
-saveRDS(list_genes, 'C:/Dropbox/NICO/R/Across_Species/Shiny_app/data/Across_Species_genelist.Rds')
+saveRDS(list_genes, here("Shiny_app", "data", "Muscle_Models_Profiling_genelist.Rds"))
 
 
 #Make a list of data for ggplot
@@ -33,8 +33,9 @@ for (i in 1:nrow(res)){
   colnames(data) <- c("x","y","Gene")              #rename column names to make it possible to rbind later
   datalist[[i]] <- data
 }
+
 datalist[['SLC2A4']] #check example
-saveRDS(datalist, 'C:/Dropbox/NICO/R/Across_Species/Shiny_app/data/Across_Species_data.Rds')
+saveRDS(datalist, here("Shiny_app", "data", "Muscle_Models_Profiling_data.Rds"))
 
 
 #stats for all genes
@@ -72,18 +73,20 @@ rownames(stats) <- c("HumanCell", "MouseC2C12", "RatL6",
                      "HumanTissue", "MouseTissue", "RatTissue") 
 statslist[[i]] <- stats
 }
+
 statslist[['SLC2A4']] #check example
-saveRDS(statslist, 'C:/Dropbox/NICO/R/Across_Species/Shiny_app/data/Across_Species_statslist.Rds')
+saveRDS(statslist, here("Shiny_app", "data", "Muscle_Models_Profiling_statslist.Rds"))
 
 
 
 ###################################################################################
-#Only for deployment
+# Deployment on shinyapps.io
 #install.packages('rsconnect')
-#install.packages('Rcpp')
+library(here)
 library(rsconnect)
 rsconnect::setAccountInfo(name='nicopillon',
                           token='359847F440F90E4AFB8A08FAD87DF504',
                           secret='9Tik3y8B9W26RJzkfLxqPbHGQzeltWye3I14pqD4')
 
-rsconnect::deployApp('C:/Dropbox/Nico/R/Across_Species/Shiny_app', appName="Across_Species")
+rsconnect::deployApp(here("Shiny_app"), appName="Muscle_Models_Profiling")
+

@@ -16,7 +16,7 @@ cbLines   <- c(   'a'   ,    'b'   ,    'c'   ,    'd'   ,    'e'   ,    'f'   ,
 
 
 #load data and define samples
-res <-  readRDS(here("Data", "Transcriptomics", "GENENAME_batch.Rds"))
+res <-  readRDS(here("Data_Processed", "GENENAME_norm.Rds"))
 res <- cbind(res[grep('HumanCell', colnames(res))],
              res[grep('MouseC2C12', colnames(res))],
              res[grep('RatL6', colnames(res))])
@@ -41,7 +41,7 @@ PlotFunction <- function(genename) {
     geom_boxplot() +
     labs(x="",
          y=paste(genename)) + 
-    theme_bw() +
+    theme_bw() + 
     theme(plot.title  = element_text(face="bold", color="black", size=7, angle=0),
           axis.text.x = element_text(color="black", size=6, angle=45, hjust=1),
           axis.text.y = element_text(color="black", size=6, angle=0),
@@ -52,7 +52,10 @@ PlotFunction <- function(genename) {
     scale_color_manual(values=cbPalette)
 }
 
-PlotFunction('LDHB')
+PlotFunction('RAC1')
+PlotFunction('CAMK2A')
+PlotFunction('MYOC')
+
 
 #======================================================================================================
 # Gene markers of glycolysis, contraction and beta-oxidation
@@ -67,15 +70,13 @@ library(gridExtra)
 png(filename=here("Figures", "Contraction.png"), #print graph
     units="cm", width=12, height=10, 
     pointsize=12, res=300)
-matrix <- rbind(c(1,2,3,4), c(5,6,7,8))
-grid.arrange(PlotFunction('MYH7') +     labs(title="Type I (oxidative)"),
-             PlotFunction('MYL2') +     labs(title="Type I (oxidative)"),
-             PlotFunction('MYH1') +     labs(title="Type II (glycolytic)"), #9
-             PlotFunction('MYH4') +     labs(title="Type II (glycolytic)"),
-             PlotFunction('TNNT1'),
-             PlotFunction('TNNC1'),
-             PlotFunction('TNNT3'),
-             PlotFunction('TNNC2'),
+matrix <- rbind(c(1,2,3), c(4,5,6))
+grid.arrange(PlotFunction('MYH1') + ylim(-4, 7.5),
+             PlotFunction('MYH3') + ylim(-4, 7.5),
+             PlotFunction('MYH4') + ylim(-4, 7.5),
+             PlotFunction('MYH6') + ylim(-4, 7.5),
+             PlotFunction('MYH7')+ ylim(-4, 7.5),
+             PlotFunction('MYH9')+ ylim(-4, 7.5),
              layout_matrix=matrix)
 dev.off()
 
@@ -173,3 +174,15 @@ grid.arrange(PlotFunction('CS') + ylim(-0.5,5),
              PlotFunction('CS') + ylim(-0.5,5),
              layout_matrix=matrix)
 dev.off()
+
+
+png(filename=here("Figures", "EPS_GlcUptake.png"), #print graph
+    units="cm", width=7.5, height=4.25, 
+    pointsize=12, res=300)
+matrix <- rbind(c(1,2,3))
+grid.arrange(PlotFunction('RAC1'),
+             PlotFunction('CAMK2A'),
+             PlotFunction('TBC1D1'),
+             layout_matrix=matrix)
+dev.off()
+

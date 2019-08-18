@@ -61,69 +61,6 @@ PlotFunction <- function(genename) {
 }
 
 
-#======================================================================================================
-# Boxplots of typical gene profiles (based on the file "Stats_ANOVA")
-#======================================================================================================
-# Representative genes selected in Stats for the effect of species, model or interation.
-stats <- read.delim(here("Stats", "2-way_ANOVA.txt"))[,22:24]
-
-
-#typical species effect
-species <- stats[stats$Species.FDR<0.01 & stats$Sample.FDR>0.5 & stats$Interaction.FDR>0.5,]
-species <- species[order(species$Species.FDR),]
-t1 <- PlotFunction(rownames(species[1,]))
-t2 <- PlotFunction(rownames(species[2,]))
-t1
-
-#typical cell vs tissue effect
-sample <- stats[stats$Species.FDR>0.5 & stats$Sample.FDR<0.01 & stats$Interaction.FDR>0.5,]
-sample <- sample[order(sample$Sample.FDR),]
-t3 <- PlotFunction(rownames(sample[1,]))
-t4 <- PlotFunction(rownames(sample[1,]))
-t3
-
-#typical interaction
-interaction <- stats[stats$Species.FDR<.001 & stats$Sample.FDR<0.001 & stats$Interaction.FDR<0.001,]
-interaction <- interaction[order(interaction$Interaction.FDR),]
-t5 <- PlotFunction(rownames(interaction[1,]))
-t6 <- PlotFunction(rownames(interaction[1,]))
-t5
-
-# Print figure
-png(filename=here("Figures", "Profiles.png"), #print graph
-    units="cm", width=17.2, height=12, 
-    pointsize=12, res=300)
-matrix <- rbind(c(1,2,3), c(4,5,6))
-grid.arrange(t1, t3, t5,
-             t2, t4, t6,
-             layout_matrix=matrix)
-dev.off()
-
-
-#======================================================================================================
-# Gene markers of glycolysis, contraction and beta-oxidation
-#======================================================================================================
-# Glycolysis: phosphofructokinase (PFKM) step is the rate-limiting step
-# Beta-oxidation: Carnitine Palmitoyltransferase (CPT1A) is the rate limiting step
-# Contraction response: myosin heavy chain (MYH1) is specific to adult striated muscle
-# Insulin response: glucose transporter system (GLUT4) is rate limiting
-library(grid)
-library(gridExtra)
-png(filename=here("Figures", "Markers.png"), #print graph
-    units="cm", width=18, height=12, 
-    pointsize=12, res=300)
-matrix <- rbind(c(1,2,3,4), c(5,6,7,8))
-grid.arrange(PlotFunction('PFKM') + labs(title="Glycolysis"), 
-             PlotFunction('CPT1A') + labs(title="Beta-oxidation"), 
-             PlotFunction('MYH1') + labs(title="Contractile apparatus"),
-             PlotFunction('SLC2A4') + labs(title="Glucose transport"),
-             PlotFunction('LDHB') + labs(title="Glycolysis"), 
-             PlotFunction('PPARG') + labs(title="Beta-oxidation"), 
-             PlotFunction('RYR1') + labs(title="Contractile apparatus"),
-             PlotFunction('SLC2A1') + labs(title="Glucose transport"), 
-             layout_matrix=matrix)
-dev.off()
-
 
 #======================================================================================================
 # Gene markers of differentiation
@@ -131,6 +68,64 @@ dev.off()
 library(grid)
 library(gridExtra)
 png(filename=here("Figures", "Markers_Differentiation.png"), #print graph
+    units="cm", width=18, height=12, 
+    pointsize=12, res=300)
+matrix <- rbind(c(1,2,3,4), c(5,6,7,8))
+grid.arrange(PlotFunction('DES'),
+             PlotFunction('MYOG'),
+             PlotFunction('DMD'),
+             PlotFunction('CKM'),
+             PlotFunction('MYOD1'),
+             PlotFunction('MSTN'),
+             PlotFunction('MYF5'),
+             PlotFunction('PAX3'),
+             layout_matrix=matrix)
+dev.off()
+
+
+#======================================================================================================
+# Normalize by tissue from each Species
+#======================================================================================================
+library(matrixStats)
+median_human <- rowMedians(as.matrix(res[grep('HumanTissue', colnames(res))]), na.rm=T)
+median_mouse <- rowMedians(as.matrix(res[grep('MouseTissue', colnames(res))]), na.rm=T)
+median_rat   <- rowMedians(as.matrix(res[grep('RatTissue', colnames(res))]), na.rm=T)
+
+res_norm <- cbind(res[grep('HumanCell', colnames(res))] - median_human,
+                  res[grep('MouseC2C12', colnames(res))] - median_mouse,
+                  res[grep('RatL6', colnames(res))] - median_rat)
+
+Sample <- c(rep("HSMC",  length(grep('HumanCell', colnames(res)))),
+            rep("C2C12", length(grep('MouseC2C12',  colnames(res)))),
+            rep("L6",    length(grep('RatL6',       colnames(res)))))
+
+PlotFunction <- function(genename) {
+  data   <- data.frame()                                #create an empty dataframe to collect data
+  for( i in 1:length(genename)) { 
+    y     <- as.numeric(res_norm[genename[i],])              #collect data for gene name i
+    datay <- cbind.data.frame(Sample, y, rep(genename[i]))   #create table with x="sample type", y="data", "gene name"
+    colnames(datay) <- c("x","y","Gene")                #rename column names to make it possible to rbind later
+    data  <- rbind.data.frame(data, datay)              #bind the new gene data at the bottom of the previous one
+  }
+  data$x <- factor(data$x, levels=c("HSMC", "C2C12",  "L6")) #for a box plot, x should be a factor
+  ggplot(data, aes(x=x, y=y, fill=x)) +  
+    geom_boxplot() +
+    labs(x="",
+         y=paste(genename)) + 
+    theme_bw() + 
+    theme(plot.title  = element_text(face="bold", color="black", size=7, angle=0),
+          axis.text.x = element_text(color="black", size=6, angle=45, hjust=1),
+          axis.text.y = element_text(color="black", size=6, angle=0),
+          axis.title  = element_text(face="bold", color="black", size=7, angle=0),
+          legend.text = element_text(face="bold", color="black", size=6, angle=0),
+          legend.position="none", legend.title = element_blank()) + 
+    scale_fill_manual(values=cbPalette) +
+    scale_color_manual(values=cbPalette)
+}
+
+library(grid)
+library(gridExtra)
+png(filename=here("Figures", "Markers_Differentiation_norm.png"), #print graph
     units="cm", width=18, height=12, 
     pointsize=12, res=300)
 matrix <- rbind(c(1,2,3,4), c(5,6,7,8))
