@@ -222,9 +222,10 @@ rm(mouse) #needed to free some memory on slow machines
 # Aggregate by gene symbol
 Final <- data.frame(aggregate(Final[,5:ncol(Final)], by=list(Final$genename), FUN=mean, na.rm=TRUE), row.names = 1)
 Final[Final == 'NaN'] <- NA
+FinalNA <- cbind(rownames(Final), rowSums(is.na(Final)) / ncol(Final))
 
 # delete genes that contain too many NAs
-noNA <- Final[rowSums(is.na(Final)) / ncol(Final) < 20/100, ]
+noNA <- Final[rowSums(is.na(Final)) / ncol(Final) < 50/100, ]
 
 # Normalize between arrays
 library(limma)

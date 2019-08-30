@@ -180,9 +180,9 @@ png(filename=here("Figures", "EPS_GlcUptake.png"), #print graph
     units="cm", width=7.5, height=4.25, 
     pointsize=12, res=300)
 matrix <- rbind(c(1,2,3))
-grid.arrange(PlotFunction('RAC1'),
-             PlotFunction('CAMK2A'),
+grid.arrange(PlotFunction('CAMK2A'),
              PlotFunction('TBC1D1'),
+             PlotFunction('RAC1'),
              layout_matrix=matrix)
 dev.off()
 

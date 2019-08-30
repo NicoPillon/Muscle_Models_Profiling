@@ -82,11 +82,11 @@ saveRDS(statslist, here("Shiny_app", "data", "Muscle_Models_Profiling_statslist.
 ###################################################################################
 # Deployment on shinyapps.io
 #install.packages('rsconnect')
-library(here)
-library(rsconnect)
-rsconnect::setAccountInfo(name='nicopillon',
-                          token='359847F440F90E4AFB8A08FAD87DF504',
-                          secret='9Tik3y8B9W26RJzkfLxqPbHGQzeltWye3I14pqD4')
+#library(here)
+#library(rsconnect)
+#rsconnect::setAccountInfo(name='nicopillon',
+#                          token='359847F440F90E4AFB8A08FAD87DF504',
+#                          secret='9Tik3y8B9W26RJzkfLxqPbHGQzeltWye3I14pqD4')
 
-rsconnect::deployApp(here("Shiny_app"), appName="Muscle_Models_Profiling")
+#rsconnect::deployApp(here("Shiny_app"), appName="Muscle_Models_Profiling")
 
