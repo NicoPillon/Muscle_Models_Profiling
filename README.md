@@ -1,6 +1,6 @@
 Comparative profiling of skeletal muscle models reveals heterogeneity of transcriptome and metabolism
 ================
-Ahmed M. Abdelmoez, Laura Sardón Puig, Jonathon A. Smith, Brendan M. Gabriel, Mladen Savikj, Lucile Dollet, Alexander V. Chibalin, Anna Krook, Juleen R. Zierath and Nicolas J. Pillon
+Ahmed M. Abdelmoez, Laura Sardón Puig, Jonathon AB. Smith, Brendan M. Gabriel, Mladen Savikj, Lucile Dollet, Alexander V. Chibalin, Anna Krook, Juleen R. Zierath and Nicolas J. Pillon
 October 10th, 2019
 
 Publication: <https://nicopillon.com/tools/muscle-models-profiling/>
