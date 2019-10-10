@@ -67,9 +67,11 @@ PlotFunction('MYOC')
 library(grid)
 library(gridExtra)
 
-png(filename=here("Figures", "Contraction.png"), #print graph
+
+
+tiff(filename=here("Figures", "Contraction.tiff"), #print graph
     units="cm", width=12, height=10, 
-    pointsize=12, res=300)
+    pointsize=12, res=1200)
 matrix <- rbind(c(1,2,3), c(4,5,6))
 grid.arrange(PlotFunction('MYH1') + ylim(-4, 7.5),
              PlotFunction('MYH3') + ylim(-4, 7.5),
@@ -81,63 +83,63 @@ grid.arrange(PlotFunction('MYH1') + ylim(-4, 7.5),
 dev.off()
 
 
-png(filename=here("Figures", "Glc_Uptake_basal.png"), #print graph
-    units="cm", width=(3*2), height=4.3, 
-    pointsize=12, res=300)
+tiff(filename=here("Figures", "Glc_Uptake_basal.tiff"), #print graph
+    units="cm", width=(3*1.6), height=4, 
+    pointsize=12, res=1200)
 matrix <- rbind(c(1,2))
 grid.arrange(PlotFunction('SLC2A1'),
              PlotFunction('SLC2A3'),
              layout_matrix=matrix)
 dev.off()
 
-png(filename=here("Figures", "Glc_Uptake_insulin.png"), #print graph
-    units="cm", width=(3*2), height=4.3, 
-    pointsize=12, res=300)
+tiff(filename=here("Figures", "Glc_Uptake_insulin.tiff"), #print graph
+    units="cm", width=(3*1.6), height=4, 
+    pointsize=12, res=1200)
 matrix <- rbind(c(1,2))
 grid.arrange(PlotFunction('SLC2A4'),
              PlotFunction('PIK3CD'),
              layout_matrix=matrix)
 dev.off()
 
-png(filename=here("Figures", "Glyg_Synthesis_basal.png"), #print graph
-    units="cm", width=(3*2), height=4.3, 
-    pointsize=12, res=300)
+tiff(filename=here("Figures", "Glyg_Synthesis_basal.tiff"), #print graph
+    units="cm", width=(3*1.6), height=4, 
+    pointsize=12, res=1200)
 matrix <- rbind(c(1,2))
 grid.arrange(PlotFunction('GYS1'),
              PlotFunction('GYS2'),
              layout_matrix=matrix)
 dev.off()
 
-png(filename=here("Figures", "Glyg_Synthesis_insulin.png"), #print graph
-    units="cm", width=(3*2), height=4.3, 
-    pointsize=12, res=300)
+tiff(filename=here("Figures", "Glyg_Synthesis_insulin.tiff"), #print graph
+    units="cm", width=(3*1.6), height=4, 
+    pointsize=12, res=1200)
 matrix <- rbind(c(1,2))
 grid.arrange(PlotFunction('GSK3A'),
              PlotFunction('GSK3B'),
              layout_matrix=matrix)
 dev.off()
 
-png(filename=here("Figures", "FAOx.png"), #print graph
+tiff(filename=here("Figures", "FAOx.tiff"), #print graph
     units="cm", width=6.5, height=4.3, 
-    pointsize=12, res=300)
+    pointsize=12, res=1200)
 matrix <- rbind(c(1,2))
 grid.arrange(PlotFunction('CPT1B'),
              PlotFunction('CPT2'),
              layout_matrix=matrix)
 dev.off()
 
-png(filename=here("Figures", "GlcOx.png"), #print graph
+tiff(filename=here("Figures", "GlcOx.tiff"), #print graph
     units="cm", width=6.5, height=4.3, 
-    pointsize=12, res=300)
+    pointsize=12, res=1200)
 matrix <- rbind(c(1,2))
 grid.arrange(PlotFunction('PDHA1'),
              PlotFunction('PDHB'),
              layout_matrix=matrix)
 dev.off()
 
-png(filename=here("Figures", "Glycolysis.png"), #print graph
+tiff(filename=here("Figures", "Glycolysis.tiff"), #print graph
     units="cm", width=(3*2), height=6, 
-    pointsize=12, res=300)
+    pointsize=12, res=1200)
 matrix <- rbind(c(1,2))
 grid.arrange(PlotFunction('PFKM'),
              PlotFunction('LDHA'),
@@ -145,9 +147,9 @@ grid.arrange(PlotFunction('PFKM'),
 dev.off()
 
 
-png(filename=here("Figures", "Proliferation.png"), #print graph
+tiff(filename=here("Figures", "Proliferation.tiff"), #print graph
     units="cm", width=9.5, height=5, 
-    pointsize=12, res=300)
+    pointsize=12, res=1200)
 matrix <- rbind(c(1,2,3))
 grid.arrange(PlotFunction('MKI67'),
              PlotFunction('PLK1'),
@@ -156,9 +158,9 @@ grid.arrange(PlotFunction('MKI67'),
 dev.off()
 
 
-png(filename=here("Figures", "Lactate.png"), #print graph
-    units="cm", width=5, height=4.5, 
-    pointsize=12, res=300)
+tiff(filename=here("Figures", "Lactate.tiff"), #print graph
+    units="cm", width=6, height=4.5, 
+    pointsize=12, res=1200)
 matrix <- rbind(c(1,2))
 grid.arrange(PlotFunction('LDHA') + ylim(-1.5,7),
              PlotFunction('LDHB') + ylim(-1.5,7),
@@ -166,9 +168,9 @@ grid.arrange(PlotFunction('LDHA') + ylim(-1.5,7),
 dev.off()
 
 
-png(filename=here("Figures", "CS.png"), #print graph
+tiff(filename=here("Figures", "CS.tiff"), #print graph
     units="cm", width=5, height=4.5, 
-    pointsize=12, res=300)
+    pointsize=12, res=1200)
 matrix <- rbind(c(1,2))
 grid.arrange(PlotFunction('CS') + ylim(-0.5,5),
              PlotFunction('CS') + ylim(-0.5,5),
@@ -176,9 +178,9 @@ grid.arrange(PlotFunction('CS') + ylim(-0.5,5),
 dev.off()
 
 
-png(filename=here("Figures", "EPS_GlcUptake.png"), #print graph
+tiff(filename=here("Figures", "EPS_GlcUptake.tiff"), #print graph
     units="cm", width=7.5, height=4.25, 
-    pointsize=12, res=300)
+    pointsize=12, res=1200)
 matrix <- rbind(c(1,2,3))
 grid.arrange(PlotFunction('CAMK2A'),
              PlotFunction('TBC1D1'),

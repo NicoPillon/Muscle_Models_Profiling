@@ -62,18 +62,18 @@ pca <- autoplot(PCA_data, data=groups,
 pca
 
 
-png(filename=here("Figures", "PCA.png"), 
+tiff(filename=here("Figures", "PCA.tiff"), 
     units="cm", width=9, height=5, 
-    pointsize=12, res=300)
+    pointsize=12, res=1200)
 pca
 dev.off()
 
 
-png(filename=here("Figures", "PCA_annotated.png"), 
-    units="cm", width=29, height=26, 
-    pointsize=12, res=300)
-pca +  geom_text_repel(aes(label=colnames(noNA)), size=1, colour='black')
-dev.off()
+#tiff(filename=here("Figures", "PCA_annotated.tiff"), 
+#    units="cm", width=29, height=26, 
+#    pointsize=12, res=1200)
+#pca +  geom_text_repel(aes(label=colnames(noNA)), size=1, colour='black')
+#dev.off()
 
 
 #--------------------------------------------------------------------------------------------------
@@ -103,7 +103,7 @@ library(RColorBrewer)
 Colors=c("white", "red")
 Colors=colorRampPalette(Colors)(99)
 
-png(filename=here("Figures", "Figure_CorrelationMatrix.png"), #print graph
+tiff(filename=here("Figures", "Figure_CorrelationMatrix.tiff"), #print graph
     units="cm", width=15, height=15, 
     pointsize=12, res=1200)
 heatmap.2(cormatrix, scale="none",
@@ -160,7 +160,7 @@ dat <- as.matrix(dat)
 # plot
 library(circlize)
 
-png(filename=here("Figures", "ChordPlot.png"), #print graph
+tiff(filename=here("Figures", "ChordPlot.tiff"), #print graph
     units="cm", width=11, height=11, 
     pointsize=12, res=1200)
 
@@ -173,7 +173,7 @@ dev.off()
 # re-organize to have human muscle on top
 library(circlize)
 dat2 <- dat[c(2,5,3,6,1,4),c(2,5,3,6,1,4)]
-png(filename=here("Figures", "ChordPlot2.png"), #print graph
+tiff(filename=here("Figures", "ChordPlot2.tiff"), #print graph
     units="cm", width=11, height=11, 
     pointsize=12, res=1200)
 
@@ -228,7 +228,7 @@ correlation <- ggplot(data, aes(x=Gene1, y=Gene2)) +
                      values=cbShapes)
 correlation
 
-png(filename=here("Figures", "Prolif_vs_Diff.png"), #print graph
+tiff(filename=here("Figures", "Prolif_vs_Diff.tiff"), #print graph
     units="cm", width=12, height=9, 
     pointsize=12, res=1200)
 

@@ -58,8 +58,8 @@ nrow(Rat)*100/nrow(muscle)   # percentage for rat
 
 #Venn Diagram
 require(VennDiagram)
-venn.diagram(x=list(A=rownames(Human), B=rownames(Mouse), C=rownames(Rat)), filename=here("Figures", "VennDiagram.png"),
-             units="cm", width=9, height=5, res=300, margin=0.05,
+venn.diagram(x=list(A=rownames(Human), B=rownames(Mouse), C=rownames(Rat)), filename=here("Figures", "VennDiagram.tiff"),
+             units="cm", width=9, height=5, res=1200, margin=0.05,
              col = "black", lwd=0.5,
              fill = c("#0072B2", "#009E73", "#D55E00"), 
              alpha = 0.50,
@@ -89,7 +89,7 @@ design <- c(rep(1, length(grep('HumanCell',   colnames(muscle)))),
             rep(4, length(grep('MouseTissue', colnames(muscle)))),
             rep(5, length(grep('RatL6',       colnames(muscle)))),
             rep(6, length(grep('RatTissue',   colnames(muscle)))))
-
+i <- 1
 #prepare data in proper table
 stats <- data.frame(Sample=numeric(), Species=numeric(), Interaction=numeric(), Residuals=numeric())
 for (i in 1:nrow(muscle)) {
@@ -226,9 +226,9 @@ res <- cbind(res[grep('HumanCell', colnames(res))],
              res[grep('HumanTissue', colnames(res))],
              res[grep('MouseTissue', colnames(res))],
              res[grep('RatTissue', colnames(res))])
-Sample <- c(rep("Human Myotube",  length(grep('HumanCell', colnames(res)))),
-            rep("Mouse C2C12",   length(grep('MouseC2C12',  colnames(res)))),
-            rep("Rat L6",        length(grep('RatL6',       colnames(res)))),
+Sample <- c(rep("HSMC",  length(grep('HumanCell', colnames(res)))),
+            rep("C2C12",   length(grep('MouseC2C12',  colnames(res)))),
+            rep("L6",        length(grep('RatL6',       colnames(res)))),
             rep("Human Tissue", length(grep('HumanTissue',   colnames(res)))),  #list of sample types
             rep("Mouse Tissue",   length(grep('MouseTissue',  colnames(res)))),
             rep("Rat Tissue",   length(grep('RatTissue',  colnames(res)))))
@@ -245,7 +245,7 @@ PlotFunction <- function(genename) {
     colnames(datay) <- c("x","y","Gene")                #rename column names to make it possible to rbind later
     data  <- rbind.data.frame(data, datay)              #bind the new gene data at the bottom of the previous one
   }
-  data$x <- factor(data$x, levels=c("Human Myotube", "Mouse C2C12",  "Rat L6", 
+  data$x <- factor(data$x, levels=c("HSMC", "C2C12",  "L6", 
                                     "Human Tissue",  "Mouse Tissue", "Rat Tissue")) #for a box plot, x should be a factor
   ggplot(data, aes(x=x, y=y, fill=x)) +  
     geom_boxplot() +
@@ -292,9 +292,9 @@ t6 <- PlotFunction(rownames(interaction[1,]))
 t5
 
 # Print figure
-png(filename=here("Figures", "Profiles.png"), #print graph
+tiff(filename=here("Figures", "Profiles.tiff"), #print graph
     units="cm", width=17.2, height=12, 
-    pointsize=12, res=300)
+    pointsize=12, res=1200)
 matrix <- rbind(c(1,2,3), c(4,5,6))
 grid.arrange(t1, t3, t5,
              t2, t4, t6,
@@ -311,7 +311,7 @@ dev.off()
 # Insulin response: glucose transporter system (GLUT4) is rate limiting
 library(grid)
 library(gridExtra)
-png(filename=here("Figures", "Markers.png"), #print graph
+tiff(filename=here("Figures", "Markers.tiff"), #print graph
     units="cm", width=18, height=12, 
     pointsize=12, res=300)
 matrix <- rbind(c(1,2,3,4), c(5,6,7,8))
@@ -332,7 +332,7 @@ dev.off()
 #======================================================================================================
 library(grid)
 library(gridExtra)
-png(filename=here("Figures", "Markers_Differentiation.png"), #print graph
+tiff(filename=here("Figures", "Markers_Differentiation.tiff"), #print graph
     units="cm", width=18, height=12, 
     pointsize=12, res=300)
 matrix <- rbind(c(1,2,3,4), c(5,6,7,8))

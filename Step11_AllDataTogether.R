@@ -65,15 +65,15 @@ colnames(Glyc_HSMC) <- paste('HSMC_', seq(1,ncol(Glyc_HSMC),1), sep='')
 
 
 #Protein content
-Prot <- read_excel(here("Data_Raw", "Metabolism", "Protein content.xlsx"), sheet = "Sheet1")
+Prot <- read_excel(here("Data_Raw", "Protein", "Protein_content.xlsx"), sheet = "Sheet1")
 
-Prot_L6 <- data.frame(t(c(Prot$L6_GS, Prot$L6_FAO)))
+Prot_L6 <- data.frame(t(Prot$L6_GS))
 colnames(Prot_L6) <- paste('L6_', seq(1,ncol(Prot_L6),1), sep='')
 
-Prot_C2 <- data.frame(t(c(Prot$C2C12_GS, Prot$C2C12_FAO)))
+Prot_C2 <- data.frame(t(Prot$C2C12_GS))
 colnames(Prot_C2) <- paste('C2_', seq(1,ncol(Prot_C2),1), sep='')
 
-Prot_HSMC <- data.frame(t(c(Prot$HSMC_GS, Prot$HSMC_FAO)))
+Prot_HSMC <- data.frame(t(Prot$HSMC_GS))
 colnames(Prot_HSMC) <- paste('HSMC_', seq(1,ncol(Prot_HSMC),1), sep='')
 
 
@@ -127,6 +127,7 @@ for (i in 1:nrow(GeneData)){
   y <- as.numeric(AssayData[i,])
   estimates[,i] <-  apply(GeneData, 1, Spearman.estimate)
   pvalues[,i] <-  apply(GeneData, 1, Spearman.p.value)
+  print(i)
 }
 rownames(estimates) <- rownames(GeneData)
 rownames(pvalues) <- rownames(GeneData)

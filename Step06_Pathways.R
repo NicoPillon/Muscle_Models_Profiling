@@ -32,6 +32,31 @@ theme <- theme(plot.title  = element_text(face="bold", color="black", size=7, an
                legend.text = element_text(color="black", size=4.5, angle=0, hjust = 0),
                legend.key.size = unit(0.3, "cm"))
 
+#=====================================================================================================================
+# Figure for Contractile Proteins 
+#MYH2, MYH7B, MYH8, MYH15, MYH16 and MYL5 are not present in the dataset
+Genelist <-c("ACTA1", "ACTA2", "ACTC1",
+             "MYH1", "MYH3", "MYH4", "MYH6", "MYH7", "MYH9", "MYH10", "MYH11", "MYH13", "MYH14",
+             "MYL1", "MYL2", "MYL3", "MYL4", "MYL6", "MYL6B", "MYL7", "MYL9", "MYL10", "MYL12A", "MYL12B", "MYLPF")
+Values <- numeric()
+for (i in 1:length(Genelist)){   Values <- c(Values, as.numeric(All[Genelist[i],])) }
+Samples <-factor(rep(c("HSMC", "C2C12", "L6"), length(unique(Genelist))), levels=c('HSMC', 'C2C12', 'L6'))
+Genes <- character()
+for (i in 1:length(Genelist)){   Genes <- c(Genes, rep(Genelist[i], 3)) }
+mydata <-data.frame(Samples, Values, Genes)
+mydata$Genes <- factor(mydata$Genes, levels=Genelist)
+Contraction <- ggplot(mydata, aes(Samples, Values, fill=Genes, cutoff = factor(0) )) + theme_bw() +
+  geom_bar(stat="identity", colour="black", size=0.2) +
+  labs(x= "", y= "Relative expression",
+       fill="") +  theme 
+Contraction
+
+tiff(filename=here("Figures", "Contraction.tiff"), #print graph
+    units="cm", width=6, height=7, 
+    pointsize=12, res=1200)
+Contraction
+dev.off()
+
 
 #=====================================================================================================================
 # Oxidative metabolism
@@ -75,9 +100,9 @@ Respiration <- ggplot(mydata, aes(Exercise, values, fill=Gene)) +
   scale_fill_brewer(palette="Set3")
 Respiration
 
-png(filename=here("Figures", "Mitochondria.png"), #print graph
+tiff(filename=here("Figures", "Mitochondria2.tiff"), #print graph
     units="cm", width=5, height=5, 
-    pointsize=12, res=600)
+    pointsize=1, res=1200)
 Respiration
 dev.off()
 Respiration
@@ -85,30 +110,7 @@ Respiration
 
 
 
-#=====================================================================================================================
-# Figure for Contractile Proteins 
-#MYH2, MYH7B, MYH8, MYH15, MYH16 and MYL5 are not present in the dataset
-Genelist <-c("ACTA1", "ACTA2", "ACTC1",
-             "MYH1", "MYH3", "MYH4", "MYH6", "MYH7", "MYH9", "MYH10", "MYH11", "MYH13", "MYH14",
-             "MYL1", "MYL2", "MYL3", "MYL4", "MYL6", "MYL6B", "MYL7", "MYL9", "MYL10", "MYL12A", "MYL12B", "MYLPF")
-Values <- numeric()
-for (i in 1:length(Genelist)){   Values <- c(Values, as.numeric(All[Genelist[i],])) }
-Samples <-factor(rep(c("HSMC", "C2C12", "L6"), length(unique(Genelist))), levels=c('HSMC', 'C2C12', 'L6'))
-Genes <- character()
-for (i in 1:length(Genelist)){   Genes <- c(Genes, rep(Genelist[i], 3)) }
-mydata <-data.frame(Samples, Values, Genes)
-mydata$Genes <- factor(mydata$Genes, levels=Genelist)
-Contraction <- ggplot(mydata, aes(Samples, Values, fill=Genes, cutoff = factor(0) )) + theme_bw() +
-  geom_bar(stat="identity", colour="black", size=0.2) +
-  labs(x= "", y= "Relative abundance",
-       fill="") +  theme 
-Contraction
 
-png(filename=here("Figures", "Contraction.png"), #print graph
-    units="cm", width=6, height=7, 
-    pointsize=12, res=600)
-Contraction
-dev.off()
 
 
 
@@ -136,7 +138,7 @@ InsulinSignalling <- ggplot(mydata, aes(Exercise, values, fill=Gene)) +
   geom_bar(stat="identity", colour="black", size=0.2) +
 
   labs(title="Insulin signalling",
-       x= "", y= "Relative abundance",
+       x= "", y= "Relative expression",
        fill="") + theme +
   scale_fill_brewer(palette="Set3")
 InsulinSignalling
@@ -186,7 +188,7 @@ LipidMetab <- ggplot(mydata, aes(Exercise, values, fill=Gene)) +
   geom_bar(stat="identity", colour="black", size=0.2) +
 
   labs(title="Lipid Metabolism",
-       x= "",  y= "Relative abundance",
+       x= "",  y= "Relative expression",
        fill="") + theme +
   scale_fill_brewer(palette="Set3")
 LipidMetab
@@ -215,7 +217,7 @@ mydata <-data.frame(Exercise, values, Gene)
 
 Glycolysis <- ggplot(mydata, aes(Exercise, values, fill=Gene)) +
   geom_bar(stat="identity", colour="black", size=0.2) +
-  labs(x= "", y= "Relative abundance",
+  labs(x= "", y= "Relative expression",
        fill="") + theme_bw() + theme +
   scale_fill_brewer(palette="Set3")
 Glycolysis
@@ -241,7 +243,7 @@ AMPKisoforms <- ggplot(mydata, aes(Exercise, values, fill=Gene)) +
   geom_bar(stat="identity", colour="black", size=0.2) +
   
   labs(title="Lipid Metabolism",
-       x= "",  y= "Relative abundance",
+       x= "",  y= "Relative expression",
        fill="") + theme +
   scale_fill_brewer(palette="Set3")
 AMPKisoforms

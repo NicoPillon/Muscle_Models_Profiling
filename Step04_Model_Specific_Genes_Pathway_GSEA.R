@@ -187,15 +187,15 @@ HumanCell <- merge(Annotation, HumanCell, by.x=1, by.y=0, all=F)
 
 #Make matrix
 HumanCell$entrez <- HumanCell$ENTREZID
-HumanCell$group <- "Human Primary"
+HumanCell$group <- "HSMC"
 HumanCell$direction <- "up"
 HumanCell$direction[HumanCell$LogFC_mean <0] <- "down"
 MouseC2C12$entrez <- MouseC2C12$ENTREZID
-MouseC2C12$group <- "Mouse C2C12"
+MouseC2C12$group <- "C2C12"
 MouseC2C12$direction <- "up"
 MouseC2C12$direction[MouseC2C12$LogFC_mean <0] <- "down"
 RatL6$entrez <- RatL6$ENTREZID
-RatL6$group <- "Rat L6"
+RatL6$group <- "L6"
 RatL6$direction <- "up"
 RatL6$direction[RatL6$LogFC_mean <0] <- "down"
 mydf <- rbind(HumanCell[,9:11], MouseC2C12[,9:11], RatL6[,9:11])
@@ -219,7 +219,7 @@ keytypes(org.Hs.eg.db) # use keytypes to list all supporting types
 bp <- readRDS(here("Stats", "enrichGO.Rds"))
 bp.result <- bp@compareClusterResult
 dotplot(bp, x=~direction) + ggplot2::facet_grid(~group)
-
+bp@compareClusterResult$group <- factor(bp@compareClusterResult$group, levels=c('HSMC', 'C2C12', 'L6'))
 #save original GO
 png(filename=here("Figures", "enrichGO.png"), #print graph
     units="cm", width=24, height=18, 
