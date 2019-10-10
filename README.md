@@ -1,7 +1,6 @@
 ---
 title: "Comparative profiling of skeletal muscle models reveals heterogeneity of transcriptome and metabolism"
 author: "Ahmed M. Abdelmoez, Laura Sardón Puig, Jonathon A. Smith, Brendan M. Gabriel, Mladen Savikj, Lucile Dollet, Alexander V. Chibalin, Anna Krook, Juleen R. Zierath and Nicolas J. Pillon"
-date: "Link to publication and DOI"
 date: "https://nicopillon.com/tools/muscle-models-profiling/"
 output: github_document
 ---
