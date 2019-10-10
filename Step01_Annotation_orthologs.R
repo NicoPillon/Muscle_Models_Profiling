@@ -71,7 +71,7 @@ annot <- rbind(annot1, annot2, annot4, annot5, annot6,
 annot[annot == "" ] = NA
 annot <- annot[!is.na(annot$affy),]
 annot$GENENAME <- NULL
-saveRDS(annot, file=here("Data", "Transcriptomics", "Annotation_ENSEMBL.Rds"))
+saveRDS(annot, file=here("Data_Processed", "Transcriptomics", "Annotation_ENSEMBL.Rds"))
 
 
 #=============================================================================================================================
@@ -237,11 +237,12 @@ Norm <- Norm[order(colnames(Norm))]
 saveRDS(Norm, here("Data_Processed", "GENENAME_norm.Rds"))
 
 
+
 #=============================================================================================================================
 # Batch correction (Not used in manuscript)
 # I tried to to a batch correction using the different plateforms as batches. However, this erases differences
 # between species because the gene arrays are different in human/rat/mouse. In the end, I decided to not use
-# any batch correction. The downside of this choice is that I am unable to seprate differences dues to species 
+# any batch correction. The downside of this choice is that I am unable to separate differences dues to species 
 # from differences due to the different arrays used.
 #=============================================================================================================================
 res <- readRDS(here("Data_Processed", "GENENAME_batch.Rds"))

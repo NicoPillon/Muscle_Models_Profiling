@@ -64,14 +64,14 @@ pca
 
 tiff(filename=here("Figures", "PCA.tiff"), 
     units="cm", width=9, height=5, 
-    pointsize=12, res=1200)
+    pointsize=12, res=600)
 pca
 dev.off()
 
 
 #tiff(filename=here("Figures", "PCA_annotated.tiff"), 
 #    units="cm", width=29, height=26, 
-#    pointsize=12, res=1200)
+#    pointsize=12, res=600)
 #pca +  geom_text_repel(aes(label=colnames(noNA)), size=1, colour='black')
 #dev.off()
 
@@ -105,7 +105,7 @@ Colors=colorRampPalette(Colors)(99)
 
 tiff(filename=here("Figures", "Figure_CorrelationMatrix.tiff"), #print graph
     units="cm", width=15, height=15, 
-    pointsize=12, res=1200)
+    pointsize=12, res=600)
 heatmap.2(cormatrix, scale="none",
           margins =c(11,11),     # adjust margins to row names
           key=T, keysize=2,      # adjust key legend
@@ -157,25 +157,12 @@ for (i in 1:length(signENSEMBL)){
 }
 dat <- as.matrix(dat)
 
-# plot
-library(circlize)
-
-tiff(filename=here("Figures", "ChordPlot.tiff"), #print graph
-    units="cm", width=11, height=11, 
-    pointsize=12, res=1200)
-
-circos.clear()
-circos.par(gap.after = 10)
-chordDiagram(dat, symmetric=T, grid.col=cbPalette[1:6])
-
-dev.off()
-
-# re-organize to have human muscle on top
+# re-organize to have human muscle on top and plot
 library(circlize)
 dat2 <- dat[c(2,5,3,6,1,4),c(2,5,3,6,1,4)]
-tiff(filename=here("Figures", "ChordPlot2.tiff"), #print graph
+tiff(filename=here("Figures", "ChordPlot.tiff"), #print graph
     units="cm", width=11, height=11, 
-    pointsize=12, res=1200)
+    pointsize=12, res=600)
 
 circos.clear()
 circos.par(gap.after = 10)
@@ -230,7 +217,7 @@ correlation
 
 tiff(filename=here("Figures", "Prolif_vs_Diff.tiff"), #print graph
     units="cm", width=12, height=9, 
-    pointsize=12, res=1200)
+    pointsize=12, res=600)
 
 correlation
 
